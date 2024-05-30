@@ -1,0 +1,96 @@
+﻿@page "/products"
+@rendermode InteractiveServer
+
+<PageTitle>Products</PageTitle>
+
+<h3>Products</h3>
+
+<table class="table">
+	<thead>
+		<tr>
+			<th>Name</th>
+			<th>Price</th>
+			<th>IsInStock</th>
+			<th></th>
+		</tr>
+	</thead>
+	<tbody>
+		@foreach (var product in products)
+		{
+			<tr>
+				<td>
+					<input type="text" @bind="product.Name" />
+				</td>
+				<td>
+					<input type="number" @bind="@product.Price" />
+				</td>
+				<td>
+					<input type="checkbox" checked=@product.IsInStock />
+				</td>
+				<td>
+					<button @onclick="(()=>UpdateProduct(product))">Save</button>
+					<button @onclick="(() => DeleteProduct(product))">Delete</button>
+				</td>
+			</tr>
+		}
+	</tbody>
+</table>
+
+<button class="btn btn-primary" @onclick="AddProduct">Add Product</button>
+
+@code {
+	private List<Product> products = new List<Product>
+	{
+			new Product
+			{
+				Id = 1,
+				Name = "phone",
+				Price = 1400,
+				IsInStock = true
+			},
+			new Product
+			{
+				Id = 2,
+				Name = "gamepad",
+				Price = 100,
+				IsInStock = true
+			},
+			new Product
+			{
+				Id = 3,
+				Name = "mouse",
+				Price = 400,
+				IsInStock = false
+			},
+	};
+
+	private int nextItemId = 4;
+
+	private Product CurrentProduct = new Product();
+
+	private void DeleteProduct(Product product)
+	{
+		products.Remove(product);
+	}
+
+	private void AddProduct()
+	{
+		products.Add(
+			new Product
+				{
+					Id = nextItemId,
+					Name = "",
+					Price = 0,
+					IsInStock = true
+				}
+		);
+		nextItemId++;
+	}
+
+	private void UpdateProduct(Product product)
+	{
+		var prod = products.Where(x => x.Id == product.Id).FirstOrDefault();
+		var index = products.IndexOf(prod);
+		products[index] = product;
+	}
+}
